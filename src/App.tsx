@@ -1,7 +1,7 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
-import { ThreeElement } from "./ThreeElement";
 import { OrbitControls } from "@react-three/drei";
+import { MaterialElement } from "./MaterialElement";
 // import { useControls } from "leva";
 
 function App() {
@@ -27,8 +27,8 @@ function App() {
         <color attach="background" args={["white"]} />
         <OrbitControls />
         <axesHelper args={[6]} />
-        <gridHelper args={[10, 10]} />
-        <ThreeElement />
+        <gridHelper args={[30, 30]} />
+        <MaterialElement />
       </Canvas>
       R3F_Basic
     </>

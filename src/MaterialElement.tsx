@@ -1,30 +1,27 @@
-import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { useTexture } from "@react-three/drei";
 
-export function ThreeElement() {
+export const MaterialElement = () => {
   const meshRef = useRef<THREE.Mesh>(null);
-
   const groupRef = useRef<THREE.Group>(null);
 
-  useFrame(() => {
-    console.log("frame");
-  });
+  const matcap = useTexture("./images/matcap1.png");
 
   useEffect(() => {
     for (let i = 0; i < groupRef.current!.children.length; i++) {
       const childMesh = groupRef.current!.children[i] as THREE.Mesh;
       childMesh.geometry = meshRef.current!.geometry;
-      childMesh.position.x = i * 2;
+      childMesh.position.x = i * 2 - 10;
     }
   }, []);
 
   return (
     <>
-      <directionalLight position={[5, 5, 5]} intensity={5} />
+      <directionalLight position={[5, 5, 5]} intensity={1} />
 
       <mesh ref={meshRef} position={[0, 0, 0]}>
-        <sphereGeometry args={[1, 10, 10]} />
+        <torusKnotGeometry args={[0.5, 0.2]} />
         <meshBasicMaterial color="green" visible={false} />
       </mesh>
 
@@ -71,7 +68,44 @@ export function ThreeElement() {
           {/* Normal 벡터의 xyz 값을 rgb로 표현*/}
           <meshNormalMaterial />
         </mesh>
+        {/* PBR: 물리 기반 렌더링 */}
+        <mesh>
+          <meshStandardMaterial
+            color="red"
+            emissive={"red"} // 발광 색상
+            roughness={0.1} // 기본 값 1, 0~1 사이의 값, 0일 수록 거칠고, 1일 수록 매끄러움
+            metalness={1} // 기본 값 0, 0~1 사이의 값, 0일 수록 비금속, 1일 수록 금속
+          />
+        </mesh>
+        <mesh>
+          <meshPhysicalMaterial
+            color="#ffffff"
+            emissive={"black"}
+            transparent={true}
+            transmission={1} // 투과효과
+            thickness={0.1} // 유리 두께
+            ior={2} // 굴절율율
+          />
+        </mesh>
+        <mesh>
+          {/* 카메라의 거리에 따라  */}
+          <meshDepthMaterial />
+        </mesh>
+        <mesh>
+          {/* matCap 다운로드하여 public > images 파일, useTexture 사용 */}
+          <meshMatcapMaterial
+            matcap={matcap}
+            // flatShading={true}
+          />
+        </mesh>
+        <mesh>
+          {/* tone 파일 사용, minfilter, magfilter,  public > images 파일, useTexture 사용 */}
+          <meshToonMaterial
+            color={"red"}
+            // flatShading={true}
+          />
+        </mesh>
       </group>
     </>
   );
-}
+};
